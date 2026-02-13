@@ -348,8 +348,8 @@ def show_overview(user_id, start_date=None, end_date=None):
                 expense_pct = (expense / total) * 100
                 
                 st.markdown("**Breakdown:**")
-                st.progress(income_pct / 100, text=f"Income: {income_pct:.1f}%")
-                st.progress(expense_pct / 100, text=f"Expenses: {expense_pct:.1f}%")
+                st.progress(income_pct / 100, text=f"Credit: {income_pct:.1f}%")
+                st.progress(expense_pct / 100, text=f"Debit: {expense_pct:.1f}%")
         else:
             st.info("No transaction data available yet.")
     
