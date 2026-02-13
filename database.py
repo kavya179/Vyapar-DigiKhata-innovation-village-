@@ -79,6 +79,29 @@ def create_table():
 # Initialize tables immediately
 create_table()
 
+# --- VALIDATION FUNCTIONS ---
+
+def validate_phone(phone):
+    """
+    Validate and format phone number
+    Returns: (is_valid: bool, result: str or error_message)
+    """
+    if not phone:
+        return False, "Phone number cannot be empty"
+    
+    # Remove any spaces, dashes, or parentheses
+    cleaned_phone = ''.join(filter(str.isdigit, phone))
+    
+    # Check if it's exactly 10 digits
+    if len(cleaned_phone) != 10:
+        return False, "Phone number must be exactly 10 digits"
+    
+    # Check if it starts with valid digit (6-9 for Indian mobile numbers)
+    if cleaned_phone[0] not in ['6', '7', '8', '9']:
+        return False, "Mobile number must start with 6, 7, 8, or 9"
+    
+    return True, cleaned_phone
+
 # --- USER FUNCTIONS ---
 
 def insert_user(name, email, shop_name, password):
