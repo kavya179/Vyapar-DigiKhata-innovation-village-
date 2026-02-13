@@ -327,7 +327,7 @@ def show_overview(user_id, start_date=None, end_date=None):
     
     # Graph 2: Pie Chart - Income vs Expenses
     with col1:
-        st.markdown("#### 💰 Income vs Expenses Distribution")
+        st.markdown("#### 💰 Credit vs Debit Distribution")
         
         if income > 0 or expense > 0:
             # Create dataframe for visualization
@@ -337,9 +337,9 @@ def show_overview(user_id, start_date=None, end_date=None):
             })
             
             # Display metrics
-            st.write(f"**Total Income:** ₹{income:,.2f}")
-            st.write(f"**Total Expenses:** ₹{expense:,.2f}")
-            st.write(f"**Net Profit/Loss:** ₹{income - expense:,.2f}")
+            st.write(f"**Total Credit:** ₹{income:,.2f}")
+            st.write(f"**Total Debit:** ₹{expense:,.2f}")
+            st.write(f"**Net Balance:** ₹{income - expense:,.2f}")
             
             # Show percentage breakdown with progress bars
             total = income + expense
