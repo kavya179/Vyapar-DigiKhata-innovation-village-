@@ -599,7 +599,6 @@ def home_page():
         <div style='text-align: center; color: #94a3b8; padding: 2rem 0; border-top: 1px solid #e2e8f0; margin-top: 2rem;'>
             <p style='font-size: 1.1rem; color: #0284C7; font-weight: 600;'>© 2026 Vyapar DigiKhata</p>
             <p style='font-size: 1rem; margin: 0.5rem 0;'>Made with ❤️ by L.J. University Students</p>
-            <p style='font-size: 0.95rem; color: #64748b;'>Kavya Parmar • Chaudhari Krisha • Odedra Asha • Mistry Nirav</p>
             <p style='font-size: 0.9rem; margin-top: 1rem; color: #0EA5E9; font-weight: 600;'>🎓 Innovation Village - College Project</p>
             <p style='font-size: 0.88rem; color: #64748b; margin-top: 0.3rem;'>Under the guidance of <strong style='color: #0284C7;'>Prof. Parth Sinroza</strong></p>
             <p style='font-size: 0.85rem; margin-top: 1rem;'>Manage your business the smart way 📊</p>
