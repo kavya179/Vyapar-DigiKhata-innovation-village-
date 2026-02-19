@@ -53,16 +53,26 @@ def validate_name(name):
     return True, ""
 
 def validate_password(password):
-    """Validate password using Python string methods"""
+    """Validate strong password"""
     if not password:
         return False, "Password cannot be empty"
     
-    if len(password) != 6:
-        return False, "Password must be exactly 6 characters"
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters"
     
-    # Check if password contains only digits
-    if not password.isdigit():
-        return False, "Password must contain only numbers (0-9)"
+    has_upper = any(c.isupper() for c in password)
+    has_lower = any(c.islower() for c in password)
+    has_digit = any(c.isdigit() for c in password)
+    has_special = any(c in "!@#$%^&*()_+-=[]{}|;':\",./<>?" for c in password)
+    
+    if not has_upper:
+        return False, "Password must contain at least one uppercase letter (A-Z)"
+    if not has_lower:
+        return False, "Password must contain at least one lowercase letter (a-z)"
+    if not has_digit:
+        return False, "Password must contain at least one number (0-9)"
+    if not has_special:
+        return False, "Password must contain at least one special character (!@#$%^&*...)"
     
     return True, ""
 
@@ -104,16 +114,64 @@ def sign_up_page():
         password = st.text_input(
             "🔒 Create Password *",
             type="password",
-            max_chars=6,
-            placeholder="6-digit password",
-            help="Create a 6-digit numeric password"
+            placeholder="Min 8 chars: A-Z, a-z, 0-9, !@#...",
+            help="Must have uppercase, lowercase, number & special character"
         )
+        
+        # Password Strength Indicator
+        if password:
+            score = 0
+            hints = []
+            
+            if len(password) >= 8:
+                score += 1
+            else:
+                hints.append("• At least 8 characters")
+            if any(c.isupper() for c in password):
+                score += 1
+            else:
+                hints.append("• Add an uppercase letter (A-Z)")
+            if any(c.islower() for c in password):
+                score += 1
+            else:
+                hints.append("• Add a lowercase letter (a-z)")
+            if any(c.isdigit() for c in password):
+                score += 1
+            else:
+                hints.append("• Add a number (0-9)")
+            if any(c in "!@#$%^&*()_+-=[]{}|;':\",./<>?" for c in password):
+                score += 1
+            else:
+                hints.append("• Add a special character (!@#$%...)")
+            
+            strength_map = {
+                1: ("Very Weak", "#ff4444", 0.2),
+                2: ("Weak",      "#ff8800", 0.4),
+                3: ("Fair",      "#ffcc00", 0.6),
+                4: ("Strong",    "#88cc00", 0.8),
+                5: ("Very Strong 💪", "#00cc44", 1.0),
+            }
+            label, color, progress = strength_map.get(score, ("Very Weak", "#ff4444", 0.2))
+            
+            st.markdown(f"""
+                <div style="margin: -8px 0 4px 0;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <span style="font-size:0.82rem; color:#888;">Password strength</span>
+                        <span style="font-size:0.82rem; font-weight:bold; color:{color};">{label}</span>
+                    </div>
+                    <div style="background:#e0e0e0; border-radius:6px; height:8px; width:100%;">
+                        <div style="background:{color}; width:{int(progress*100)}%; height:8px; border-radius:6px; transition:width 0.3s;"></div>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            if hints:
+                st.caption("Missing: " + "  ".join(hints))
         
         # Confirm Password
         confirm_password = st.text_input(
             "🔒 Confirm Password *",
             type="password",
-            max_chars=6,
             placeholder="Re-enter password",
             help="Re-enter the same password"
         )

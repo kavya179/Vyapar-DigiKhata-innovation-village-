@@ -17,7 +17,7 @@ def create_table():
         owner_name TEXT,
         email TEXT,
         shop_name TEXT,
-        password INTEGER
+        password TEXT
     )
     """)
     

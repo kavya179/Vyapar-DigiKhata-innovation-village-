@@ -50,7 +50,7 @@ st.markdown("""
         box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
     }
     .feature-title {
-        font-size: 2.2rem;
+        font-size: 1.8rem;
         font-weight: bold;
         margin-bottom: 1rem;
     }
@@ -222,72 +222,6 @@ st.markdown("""
         flex-shrink: 0;
     }
     
-    /* Team Review Cards - UPDATED FOR STACKED LAYOUT */
-    .review-card {
-        background: linear-gradient(145deg, #FFFFFF 0%, #F0F9FF 100%);
-        padding: 2.2rem;
-        border-radius: 15px;
-        margin: 1.5rem 0; /* Increased top/bottom margin for separation */
-        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
-        border: 2px solid #E0F2FE;
-        transition: all 0.3s;
-    }
-    .review-card:hover {
-        transform: translateY(-5px); /* Gentle lift effect */
-        box-shadow: 0 12px 28px rgba(14, 165, 233, 0.25);
-        border-color: #0EA5E9;
-    }
-    .review-header {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        margin-bottom: 1.2rem;
-    }
-    .review-avatar {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.6rem;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
-        flex-shrink: 0;
-    }
-    .review-info {
-        flex: 1;
-    }
-    .review-name {
-        font-size: 1.3rem;
-        font-weight: bold;
-        color: #0284C7 !important; /* FIXED: Added !important to force color in Dark Mode */
-        margin: 0;
-    }
-    .review-role {
-        font-size: 1rem;
-        color: #64748b !important; /* FIXED: Added !important to force color in Dark Mode */
-        margin: 0.3rem 0 0 0;
-    }
-    .review-stars {
-        color: #FCD34D;
-        font-size: 1.4rem;
-        letter-spacing: 2px;
-    }
-    .review-text {
-        color: #475569 !important; /* FIXED: Added !important to force color in Dark Mode */
-        line-height: 1.8;
-        font-size: 1.05rem;
-        font-style: italic;
-        margin-top: 0.5rem;
-        padding: 1.5rem;
-        background: #F8FAFC;
-        border-radius: 12px;
-        border-left: 4px solid #0EA5E9;
-    }
-    
     /* CTA Section */
     .cta-section {
         background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
@@ -331,29 +265,28 @@ def home_page():
     
     st.write("")
     
-    # Hero Section
-    col1, col2 = st.columns([1.2, 1])
-    
-    with col1:
-        st.markdown("""
-            <div class='feature-box'>
-                <div class='feature-title'>📊 Manage Your Business</div>
-                <div class='feature-title'>Digitally & Efficiently</div>
-                <div class='feature-text'>
-                    Say goodbye to paper-based khata books!<br>
-                    Track customers, inventory, and transactions all in one place.<br>
-                    <b>100% Free • Unlimited Entries • Secure Data</b>
-                </div>
+    # Hero Section - full width with buttons inside
+    st.markdown("""
+        <div class='feature-box'>
+            <div class='feature-title'>📊 Manage Your Business Digitally & Efficiently</div>
+            <div class='feature-text'>
+                Say goodbye to paper-based khata books!<br>
+                Track customers, inventory, and transactions all in one place.<br>
+                <b>100% Free • Unlimited Entries • Secure Data</b>
             </div>
-        """, unsafe_allow_html=True)
+        </div>
+    """, unsafe_allow_html=True)
     
-    with col2:
-        st.markdown("""
-            <div style='text-align: center; padding: 2rem 0;'>
-                <div style='font-size: 8rem;'>📱</div>
-                <p style='color: #0284C7; font-weight: bold; font-size: 1.3rem;'>Easy • Fast • Secure</p>
-            </div>
-        """, unsafe_allow_html=True)
+    st.write("")
+    col_l, col_login, col_signup, col_r = st.columns([1, 1.5, 1.5, 1])
+    with col_login:
+        if st.button("🔐 Login to Your Account", key="hero_login_btn", use_container_width=True, type="primary"):
+            st.session_state.page = "login"
+            st.rerun()
+    with col_signup:
+        if st.button("📝 Create New Account", key="hero_signup_btn", use_container_width=True):
+            st.session_state.page = "sign_up"
+            st.rerun()
     
     st.write("---")
     
@@ -646,58 +579,6 @@ def home_page():
     st.write("")
     st.write("---")
     
-    # --- TEAM REVIEWS SECTION (MODIFIED: STACKED LAYOUT) ---
-    st.markdown("<h2 class='section-header'>💬 Meet Our Team</h2>", unsafe_allow_html=True)
-    st.markdown("<p class='section-subtitle'>Built with passion by talented developers from L.J. University who understand the challenges of small businesses</p>", unsafe_allow_html=True)
-    
-    team_members = [
-        {
-            "initials": "KP",
-            "name": "Kavya Parmar",
-            "role": "Lead Developer & Database Architect",
-            "text": "Building Vyapar DigiKhata was an incredible journey! We wanted to solve real problems faced by small businesses across India. The database architecture ensures lightning-fast performance even with thousands of transactions."
-        },
-        {
-            "initials": "CK",
-            "name": "Chaudhari Krisha",
-            "role": "Frontend Developer & UI/UX Designer",
-            "text": "Creating an intuitive interface was our top priority. Every button, every color, every animation was carefully designed to make business management as simple and enjoyable as possible for shop owners."
-        },
-        {
-            "initials": "OA",
-            "name": "Odedra Asha",
-            "role": "Backend Developer & Analytics Expert",
-            "text": "The analytics dashboard was my favorite feature to build! Seeing real-time graphs and charts help businesses understand their finances was incredibly rewarding. Data-driven decisions made easy!"
-        },
-        {
-            "initials": "MN",
-            "name": "Mistry Nirav",
-            "role": "System Integration & Security Lead",
-            "text": "Security is paramount when handling financial data. We implemented robust authentication, data encryption, and secure storage to ensure every business owner's sensitive information remains completely private and protected."
-        }
-    ]
-
-    # No columns used here, cards are stacked one after another
-    for member in team_members:
-        st.markdown(f"""
-            <div class='review-card'>
-                <div class='review-header'>
-                    <div class='review-avatar'>{member['initials']}</div>
-                    <div class='review-info'>
-                        <h3 class='review-name'>{member['name']}</h3>
-                        <p class='review-role'>{member['role']}</p>
-                    </div>
-                    <div class='review-stars'>⭐⭐⭐⭐⭐</div>
-                </div>
-                <p class='review-text'>
-                    "{member['text']}"
-                </p>
-            </div>
-        """, unsafe_allow_html=True)
-
-    
-    st.write("")
-    st.write("---")
     
     # Call to Action
     st.markdown("""
@@ -708,26 +589,8 @@ def home_page():
         </div>
     """, unsafe_allow_html=True)
     
-    # Action Buttons
+    # Action Buttons removed - buttons are above hero section only
     st.write("")
-    col1, col2, col3 = st.columns([1, 1, 1])
-    
-    with col1:
-        pass
-    
-    with col2:
-        if st.button("🔐 Login to Your Account", use_container_width=True, type="primary"):
-            st.session_state.page = "login"
-            st.rerun()
-        
-        st.write("")
-        
-        if st.button("📝 Create New Account", use_container_width=True):
-            st.session_state.page = "sign_up"
-            st.rerun()
-    
-    with col3:
-        pass
     
     # Footer
     st.write("")

@@ -61,9 +61,8 @@ def login_page():
         password = st.text_input(
             "🔒 Password",
             type="password",
-            max_chars=6,
-            placeholder="6-digit password",
-            help="Enter your 6-digit password"
+            placeholder="Enter your password",
+            help="Enter your password"
         )
         
         st.write("")
@@ -95,8 +94,8 @@ def login_page():
             # Validate password
             if not password:
                 errors.append("❌ Password cannot be empty")
-            elif len(password) != 6:
-                errors.append("❌ Password must be exactly 6 characters")
+            elif len(password) < 8:
+                errors.append("❌ Password must be at least 8 characters")
             
             # Show errors if any
             if errors:
