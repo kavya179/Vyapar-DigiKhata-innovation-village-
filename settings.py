@@ -142,152 +142,114 @@ def settings_page(default_tab=0):
         )
     
     # ============ TAB 2: EMAIL SETTINGS ============
+    
+    FIXED_SMTP_EMAIL = "vyapar.digikhata26@gmail.com"
+    
+    # Always force the email to the fixed address
+    if 'email_settings' not in st.session_state:
+        st.session_state.email_settings = {
+            'enabled': False,
+            'smtp_server': 'smtp.gmail.com',
+            'smtp_port': 587,
+            'smtp_email': FIXED_SMTP_EMAIL,
+            'smtp_password': ''
+        }
+    else:
+        st.session_state.email_settings['smtp_email']  = FIXED_SMTP_EMAIL
+        st.session_state.email_settings['smtp_server'] = 'smtp.gmail.com'
+        st.session_state.email_settings['smtp_port']   = 587
+
     with tabs[1]:
         st.subheader("📧 Email Notification Settings")
         st.write("")
-        
-        st.info("Configure email notifications to receive alerts for low stock and overdue payments directly in your inbox.")
-        
+
+        is_enabled = st.session_state.email_settings.get('enabled', False)
+        if is_enabled:
+            st.success("✅ Email notifications are ON — alerts will be sent automatically.")
+        else:
+            st.warning("⚠️ Email notifications are OFF — enable below to activate.")
+
+        st.write("")
+
         with st.form("email_settings_form"):
             enable_email = st.checkbox(
                 "Enable Email Notifications",
-                value=st.session_state.email_settings.get('enabled', False),
-                help="Turn on to receive email alerts"
+                value=is_enabled,
+                help="Turn on to receive low stock and overdue payment alerts by email"
             )
-            
-            st.markdown("### SMTP Configuration")
-            st.caption("For Gmail: Use your email and an [App Password](https://support.google.com/accounts/answer/185833)")
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                smtp_server = st.text_input(
-                    "SMTP Server",
-                    value=st.session_state.email_settings.get('smtp_server', 'smtp.gmail.com'),
-                    placeholder="smtp.gmail.com",
-                    help="Gmail: smtp.gmail.com, Outlook: smtp-mail.outlook.com"
-                )
-            
-            with col2:
-                smtp_port = st.number_input(
-                    "SMTP Port",
-                    value=st.session_state.email_settings.get('smtp_port', 587),
-                    min_value=1,
-                    max_value=65535,
-                    help="Usually 587 for TLS or 465 for SSL"
-                )
-            
-            smtp_email = st.text_input(
-                "Email Address (From)",
-                value=st.session_state.email_settings.get('smtp_email', ''),
-                placeholder="your-email@gmail.com",
-                help="Email address to send notifications from"
+
+            st.divider()
+
+            # Email — shown but locked (disabled)
+            st.text_input(
+                "📧 Sender Email Address",
+                value=FIXED_SMTP_EMAIL,
+                disabled=True,
+                help="This email address is fixed and cannot be changed"
             )
-            
+
+            # Password — user fills this in themselves
             smtp_password = st.text_input(
-                "Email Password / App Password",
+                "🔑 App Password",
                 value=st.session_state.email_settings.get('smtp_password', ''),
                 type="password",
-                placeholder="Enter your app password",
-                help="For Gmail, use App Password, not your regular password"
+                placeholder="Enter your Gmail App Password",
+                help="Go to Google Account → Security → 2-Step Verification → App Passwords"
             )
-            
+
             st.divider()
-            
+
             col_save, col_test = st.columns(2)
-            
             with col_save:
-                save_email_settings = st.form_submit_button("💾 Save Email Settings", use_container_width=True)
-            
+                save_btn = st.form_submit_button("💾 Save Settings", use_container_width=True, type="primary")
             with col_test:
-                test_email = st.form_submit_button("📧 Send Test Email", use_container_width=True)
-            
-            if save_email_settings:
-                st.session_state.email_settings = {
+                test_btn = st.form_submit_button("📧 Send Test Email", use_container_width=True)
+
+            if save_btn:
+                st.session_state.email_settings.update({
                     'enabled': enable_email,
-                    'smtp_server': smtp_server,
-                    'smtp_port': smtp_port,
-                    'smtp_email': smtp_email,
                     'smtp_password': smtp_password
-                }
-                st.success("✅ Email settings saved successfully!")
-                
-                if enable_email:
-                    st.info("📧 Email notifications are now enabled. You will receive alerts for low stock and overdue payments.")
-                else:
-                    st.warning("⚠️ Email notifications are disabled. Enable them to receive alerts.")
-            
-            if test_email:
+                })
+                st.success("✅ Settings saved!")
+                if enable_email and not smtp_password:
+                    st.warning("⚠️ Don't forget to enter your App Password!")
+
+            if test_btn:
                 if not enable_email:
                     st.error("❌ Please enable email notifications first!")
-                elif not smtp_email or not smtp_password:
-                    st.error("❌ Please fill in all email settings!")
+                elif not smtp_password:
+                    st.error("❌ Please enter your App Password!")
                 else:
-                    # Save settings first
-                    st.session_state.email_settings = {
+                    st.session_state.email_settings.update({
                         'enabled': enable_email,
-                        'smtp_server': smtp_server,
-                        'smtp_port': smtp_port,
-                        'smtp_email': smtp_email,
                         'smtp_password': smtp_password
-                    }
-                    
-                    # Send test email
+                    })
                     from email_helper import send_notification_email
-                    test_subject = "🔔 Test Email from Vyapar DigiKhata"
                     test_body = f"""
-                    <h2>Test Email Successful! ✅</h2>
-                    <p>Congratulations! Your email notification settings are working correctly.</p>
-                    <p>You will now receive alerts for:</p>
+                    <h2 style='color:#0284C7;'>Test Email Successful! ✅</h2>
+                    <p>Your Vyapar DigiKhata email notifications are working correctly.</p>
                     <ul>
-                        <li>📦 Low Stock Items</li>
-                        <li>💰 Overdue Customer Payments</li>
+                        <li>📦 <b>Low Stock Alerts</b></li>
+                        <li>💰 <b>Overdue Payment Alerts</b></li>
                     </ul>
                     <p><b>Shop Owner:</b> {username}</p>
-                    <p><b>User Email:</b> {st.session_state.user['email']}</p>
+                    <p><b>Account:</b> {st.session_state.user['email']}</p>
                     """
-                    
-                    success, message = send_notification_email(
-                        st.session_state.user['email'],
-                        test_subject,
-                        test_body
-                    )
-                    
+                    with st.spinner("Sending..."):
+                        success, message = send_notification_email(
+                            st.session_state.user['email'],
+                            "🔔 Test Email from Vyapar DigiKhata",
+                            test_body
+                        )
                     if success:
-                        st.success("✅ Test email sent successfully! Check your inbox.")
+                        st.success("✅ Test email sent! Check your inbox.")
                     else:
-                        st.error(f"❌ Failed to send test email: {message}")
-        
+                        st.error(f"❌ {message}")
+
         st.divider()
-        
-        # Display current email settings
-        st.subheader("Current Email Settings")
-        email_status = "✅ Enabled" if st.session_state.email_settings.get('enabled', False) else "❌ Disabled"
-        
-        email_config_data = pd.DataFrame({
-            "Setting": ["Status", "SMTP Server", "SMTP Port", "Email Address"],
-            "Value": [
-                email_status,
-                st.session_state.email_settings.get('smtp_server', 'Not set'),
-                str(st.session_state.email_settings.get('smtp_port', 'Not set')),
-                st.session_state.email_settings.get('smtp_email', 'Not set')
-            ]
-        })
-        
-        st.dataframe(
-            email_config_data,
-            use_container_width=True,
-            hide_index=True,
-            column_config={
-                "Setting": st.column_config.TextColumn("Setting", width="medium"),
-                "Value": st.column_config.TextColumn("Value", width="large")
-            }
-        )
-        
-        if st.session_state.email_settings.get('enabled', False):
-            st.success("📧 Email notifications are active. You will receive alerts automatically when notifications are generated.")
-        else:
-            st.warning("⚠️ Email notifications are disabled. Enable them above to receive automatic alerts.")
+        status = "✅ Enabled" if st.session_state.email_settings.get('enabled', False) else "❌ Disabled"
+        has_pass = "✅ Set" if st.session_state.email_settings.get('smtp_password') else "❌ Not set"
+        st.markdown(f"**Status:** {status} &nbsp;&nbsp; **Password:** {has_pass}")
     
     # ============ TAB 3: EXPORT DATA ============
     with tabs[2]:
